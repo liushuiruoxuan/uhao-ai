@@ -57,7 +57,7 @@ function EmptyAboutState() {
         </div>
         <div className='space-y-4 text-sm'>
           <p>
-            {t('New API Project Repository:')}{' '}
+            {t('uhao-ai Project Repository:')}{' '}
             <a
               href='https://github.com/QuantumNous/uhao-api'
               target='_blank'
