@@ -1,0 +1,18 @@
+# File path: /etc/systemd/system/uhao-api.service
+# sudo systemctl daemon-reload
+# sudo systemctl start uhao-api
+# sudo systemctl enable uhao-api
+# sudo systemctl status uhao-api
+[Unit]
+Description=One API Service
+After=network.target
+
+[Service]
+User=ubuntu  # 注意修改用户名
+WorkingDirectory=/path/to/uhao-api  # 注意修改路径
+ExecStart=/path/to/uhao-api/uhao-api --port 3000 --log-dir /path/to/uhao-api/logs  # 注意修改路径和端口号
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
