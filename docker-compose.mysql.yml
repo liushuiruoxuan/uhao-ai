@@ -1,0 +1,69 @@
+# Uhao-API Docker Compose — MySQL 版 + 本地构建
+#
+# 使用方法:
+#   1. 将此文件和 docker-compose.override.yml 放到服务器上项目根目录
+#   2. docker compose -f docker-compose.mysql.yml up -d
+#   3. 访问 http://<服务器IP>:3000
+#
+# ⚠️ 生产环境务必修改所有密码！
+
+version: '3.4'
+
+services:
+  uhao-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: uhao-api:local
+    container_name: uhao-api
+    restart: always
+    command: --log-dir /app/logs
+    ports:
+      - "80:3000"
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    environment:
+      - SQL_DSN=root:123456@tcp(mysql:3306)/uhao-api  # ⚠️ 改密码！
+      - REDIS_CONN_STRING=redis://:123456@redis:6379   # ⚠️ 改密码！
+      - TZ=Asia/Shanghai
+      - ERROR_LOG_ENABLED=true
+      - BATCH_UPDATE_ENABLED=true
+      - NODE_NAME=uhao-api-node-1
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - uhao-api-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    command: ["redis-server", "--requirepass", "123456"]  # ⚠️ 改密码！
+    networks:
+      - uhao-api-network
+
+  mysql:
+    image: mysql:8.2
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456  # ⚠️ 改密码！
+      MYSQL_DATABASE: uhao-api
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - uhao-api-network
+
+volumes:
+  mysql_data:
+
+networks:
+  uhao-api-network:
+    driver: bridge
