@@ -7,7 +7,6 @@
 #
 # ⚠️ 生产环境务必修改所有密码！
 
-version: '3.4'
 
 services:
   uhao-api:
@@ -31,8 +30,10 @@ services:
       - BATCH_UPDATE_ENABLED=true
       - NODE_NAME=uhao-api-node-1
     depends_on:
-      - redis
-      - mysql
+      redis:
+        condition: service_started
+      mysql:
+        condition: service_healthy
     networks:
       - uhao-api-network
     healthcheck:
@@ -60,6 +61,11 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - uhao-api-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   mysql_data:
