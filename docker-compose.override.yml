@@ -1,0 +1,10 @@
+# Docker Compose Override - 本地构建配置
+# 此文件会自动与 docker-compose.yml 合并
+# 将 uhao-api 从拉取远程镜像改为从本地 Dockerfile 构建
+
+services:
+  uhao-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # 保留 docker-compose.yml 中的 image 作为构建后的本地 tag

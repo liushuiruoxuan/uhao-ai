@@ -1,10 +1,14 @@
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+ARG GOPROXY_URL=https://goproxy.cn,https://goproxy.io,direct
+
 FROM oven/bun:1 AS builder
 
 WORKDIR /build
-ENV BUN_INSTALL_REGISTRY=https://registry.npmmirror.com
+ENV BUN_INSTALL_REGISTRY=${NPM_REGISTRY}
 COPY web/default/package.json .
 COPY web/default/bun.lock .
-RUN bun install
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install
 COPY ./web/default .
 COPY ./VERSION .
 RUN DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$(cat VERSION) bun run build
@@ -12,16 +16,17 @@ RUN DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$(cat VERSION) bun run b
 FROM oven/bun:1 AS builder-classic
 
 WORKDIR /build
-ENV BUN_INSTALL_REGISTRY=https://registry.npmmirror.com
+ENV BUN_INSTALL_REGISTRY=${NPM_REGISTRY}
 COPY web/classic/package.json .
 COPY web/classic/bun.lock .
-RUN bun install
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install
 COPY ./web/classic .
 COPY ./VERSION .
 RUN VITE_REACT_APP_VERSION=$(cat VERSION) bun run build
 
 FROM golang:1.26.1-alpine AS builder2
-ENV GO111MODULE=on CGO_ENABLED=0 GOPROXY=https://goproxy.cn,https://goproxy.io,direct
+ENV GO111MODULE=on CGO_ENABLED=0 GOPROXY=${GOPROXY_URL}
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -31,12 +36,15 @@ ENV GOEXPERIMENT=greenteagc
 WORKDIR /build
 
 ADD go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 COPY . .
 COPY --from=builder /build/dist ./web/default/dist
 COPY --from=builder-classic /build/dist ./web/classic/dist
-RUN go build -ldflags "-s -w -X 'github.com/QuantumNous/uhao-api/common.Version=$(cat VERSION)'" -o uhao-api
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    go build -ldflags "-s -w -X 'github.com/QuantumNous/uhao-api/common.Version=$(cat VERSION)'" -o uhao-api
 
 FROM debian:bookworm-slim
 

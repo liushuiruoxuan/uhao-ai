@@ -196,17 +196,17 @@ const FooterBar = () => {
           </div>
 
           <div className='text-sm'>
-            <span className='!text-semi-color-text-1'>
-              {t('设计与开发由')}{' '}
-            </span>
-            <a
-              href='https://github.com/QuantumNous/uhao-api'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='!text-semi-color-primary font-medium'
-            >
-              uhao-ai
-            </a>
+            {/*<span className='!text-semi-color-text-1'>*/}
+            {/*  {t('设计与开发由')}{' '}*/}
+            {/*</span>*/}
+            {/*<a*/}
+            {/*  href='https://github.com/QuantumNous/uhao-api'*/}
+            {/*  target='_blank'*/}
+            {/*  rel='noopener noreferrer'*/}
+            {/*  className='!text-semi-color-primary font-medium'*/}
+            {/*>*/}
+            {/*  uhao-ai*/}
+            {/*</a>*/}
           </div>
         </div>
       </footer>
@@ -228,17 +228,17 @@ const FooterBar = () => {
               dangerouslySetInnerHTML={{ __html: footer }}
             ></div>
             <div className='text-sm flex-shrink-0'>
-              <span className='!text-semi-color-text-1'>
-                {t('设计与开发由')}{' '}
-              </span>
-              <a
-                href='https://github.com/QuantumNous/uhao-api'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='!text-semi-color-primary font-medium'
-              >
-                uhao-ai
-              </a>
+              {/*<span className='!text-semi-color-text-1'>*/}
+              {/*  {t('设计与开发由')}{' '}*/}
+              {/*</span>*/}
+              {/*<a*/}
+              {/*  href='https://github.com/QuantumNous/uhao-api'*/}
+              {/*  target='_blank'*/}
+              {/*  rel='noopener noreferrer'*/}
+              {/*  className='!text-semi-color-primary font-medium'*/}
+              {/*>*/}
+              {/*  uhao-ai*/}
+              {/*</a>*/}
             </div>
           </div>
         </footer>
